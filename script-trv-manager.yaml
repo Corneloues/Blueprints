@@ -1,0 +1,19 @@
+sequence:
+  - if:
+      - condition: state
+        entity_id: input_select.bedroom_3_climate_state
+        state: Boost Start
+    then:
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.bedroom_3_climate_state
+        data:
+          option: Boost End
+    else:
+      - data:
+          option: Boost Start
+        action: input_select.select_option
+        target:
+          entity_id: input_select.bedroom_3_climate_state
+alias: "Boost: Bedroom 3"
+description: ""
