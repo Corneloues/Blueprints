@@ -68,8 +68,7 @@ actions:
                   option: "On"
                 action: input_select.select_option
                 target:
-                  entity_id:
-                    - !helper
+                  entity_id: !helper
             else:
               - action: select.select_option
                 metadata: {}
@@ -81,8 +80,7 @@ actions:
                   option: "Off"
                 action: input_select.select_option
                 target:
-                  entity_id:
-                    - !helper
+                  entity_id: !helper
       - conditions:
           - condition: state
             entity_id: !helper
