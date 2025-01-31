@@ -1,0 +1,77 @@
+blueprint:
+  name: Hue Light Dimmer
+  description: Change the bulb(s) in a given room based on the state of an input_select
+  domain: automation
+  input:
+    friendly_name:
+      name: Friendly Name
+      description: The name you wuld like to see the dimmer referred to
+    dimmer_name:
+      name: Dimmer ID
+      description: The dimmer ID as returned by hue_event
+    counter_dimmer:
+      name: Counter
+      description: An counter used by the dimmer automation to determine which state to set
+      selector:
+        entity:
+          domain: counter
+    room_state:
+      name: Room State Helper
+      description: An input_select with the necessary options to control the state
+      selector:
+        entity:
+          domain: input_select
+
+mode: single
+
+variables:
+  name: !input friendly_name
+  dimmer: !input dimmer_name
+  state: !input counter_dimmer
+  room: !input room_state
+
+trigger:
+- platform: event
+  event_type: hue_event
+  event_data:
+    id: "{{ dimmer }}"
+
+action:
+- service: logbook.log
+  data:
+    name: "{{ name }} State Machine"
+    message: Automation Started
+    entity_id: "{{ state }}"
+    domain: automation
+
+- choose:
+  - conditions:
+    - condition: or
+      conditions:
+      - condition: template
+        value_template: '{{ trigger.event.data.event == 1000 }}'
+      - condition: template
+        value_template: '{{ trigger.event.data.event == 1001 }}'
+      - condition: template
+        value_template: '{{ trigger.event.data.event == 1003 }}'
+    sequence:
+      - service: counter.reset
+        data: {}
+        entity_id: "{{ state }}"
+
+      - service: counter.increment
+        data: {}
+        entity_id: "{{ state }}"
+  default: []
+
+- service: input_select.select_option
+  data:
+    option: "{{ states('sensor.' + dimmer) }}"
+    entity_id: "{{ room }}"
+
+- service: logbook.log
+  data:
+    name: "{{ name }} State Machine"
+    message: Automation Finished
+    entity_id: "{{ state }}"
+    domain: automation

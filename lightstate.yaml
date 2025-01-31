@@ -1,0 +1,35 @@
+blueprint:
+  name: Light State
+  description: Set the light state machine if switched on/off away from Home Assistant
+  domain: automation
+  input:
+    room_state:
+      name: Room State Helper
+      description: An input_select with the necessary options to control the state
+      selector:
+        entity:
+          domain: input_select
+    light_group:
+      name: Light Group
+      description: The Home Assistant Light Group
+      selector:
+        entity:
+          domain: light
+
+trigger:
+  platform: state
+  entity_id: !input light_group
+
+action:
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: !input light_group
+            state: 'off'
+        sequence:
+          - service: input_select.select_option
+            data:
+              option: 'off'
+            entity_id: !input room_state
+    default: []
+mode: single
