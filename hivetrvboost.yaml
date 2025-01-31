@@ -1,0 +1,27 @@
+blueprint:
+  name: Hive TRV Manager
+  description: Boost a TRV and manage the associated TRV schedule
+  domain: automation
+  author: Corneloues
+  input:
+    trv:
+      name: TRV
+      description: The TRV to be mnanaged
+      entity:
+        domain: climate
+    helper:
+      name: Climate Helper
+      description: The input_select that has been created with the values 'On', 'Off', 'Boost Start', 'Boost End'
+      entity:
+        domain: input_select
+    schedule:
+      name: TRV Schedule
+      description: The schedule that has been created for the selected TRV
+      entity:
+        integration: scheduler
+    script:
+      name: TRV Boost Script
+      description: The script that has been created to manage a button 'toggle' action
+      entity:
+        domain: script
+    
